@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phishing Awareness Quiz — CodeAlpha Internship</title>
+<meta name="description" content="Interactive phishing awareness quiz built for the CodeAlpha Cybersecurity Internship.">
+<style>
+  :root {
+    --bg: #0A0E1A;
+    --bg-alt: #111827;
+    --card: #1A2238;
+    --card-alt: #111B2E;
+    --border: #2A3654;
+    --accent: #00FF94;
+    --accent-dim: #00CC76;
+    --warning: #FF3D71;
+    --warning-dim: #C92A55;
+    --gold: #FFB800;
+    --text: #E4E8F0;
+    --text-muted: #8B95A8;
+    --text-dim: #5C6478;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    background-image:
+      radial-gradient(circle at 15% 15%, rgba(0, 255, 148, 0.04) 0, transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(255, 61, 113, 0.04) 0, transparent 40%);
+  }
+
+  .mono { font-family: 'Consolas', 'Courier New', monospace; }
+
+  /* ---------- Layout ---------- */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    background: var(--accent);
+    border-radius: 50%;
+    line-height: 60px;
+    font-size: 32px;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 30px rgba(0, 255, 148, 0.3);
+  }
+
+  h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+  }
+
+  .accent { color: var(--accent); }
+  .danger { color: var(--warning); }
+  .gold { color: var(--gold); }
+
+  header .subtitle {
+    color: var(--accent-dim);
+    font-family: 'Consolas', monospace;
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+  }
+
+  header .meta {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    font-family: 'Consolas', monospace;
+  }
+
+  /* ---------- Screens ---------- */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.4s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ---------- Cards / Panels ---------- */
+  .card {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    margin-bottom: 1.5rem;
+  }
+
+  .card-alt {
+    background-color: var(--card-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .label {
+    font-family: 'Consolas', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--accent);
+  }
+
+  .label.warning { color: var(--warning); }
+  .label.gold { color: var(--gold); }
+
+  /* ---------- Welcome Screen ---------- */
+  .welcome-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .welcome-card p {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .features {
+    list-style: none;
+    margin: 1.5rem 0;
+  }
+
+  .features li {
+    padding: 0.6rem 0;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .features li::before {
+    content: "▸";
+    color: var(--accent);
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 0.85rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    font-family: inherit;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 255, 148, 0.3);
+    background: var(--accent-dim);
+  }
+
+  .btn:active { transform: translateY(0); }
+
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background: var(--card);
+    box-shadow: none;
+  }
+
+  /* ---------- Progress ---------- */
+  .progress-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-family: 'Consolas', monospace;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--card);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 10px rgba(0, 255, 148, 0.5);
+  }
+
+  /* ---------- Question Card ---------- */
+  .question-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  .question-context {
+    background: var(--card-alt);
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.2rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    font-family: 'Consolas', monospace;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    word-break: break-all;
+  }
+
+  .question-context strong { color: var(--text); font-weight: 600; }
+
+  /* ---------- Options ---------- */
+  .options { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .option {
+    background: var(--card-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .option:hover:not(.disabled) {
+    border-color: var(--accent);
+    background: rgba(0, 255, 148, 0.05);
+  }
+
+  .option-letter {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--border);
+    color: var(--text);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .option.correct {
+    background: rgba(0, 255, 148, 0.1);
+    border-color: var(--accent);
+  }
+
+  .option.correct .option-letter {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .option.wrong {
+    background: rgba(255, 61, 113, 0.1);
+    border-color: var(--warning);
+  }
+
+  .option.wrong .option-letter {
+    background: var(--warning);
+    color: white;
+  }
+
+  .option.disabled { cursor: default; }
+
+  .option-mark {
+    margin-left: auto;
+    font-size: 1.3rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .option.correct .option-mark,
+  .option.wrong .option-mark {
+    opacity: 1;
+  }
+
+  .option.correct .option-mark { color: var(--accent); }
+  .option.wrong .option-mark { color: var(--warning); }
+
+  /* ---------- Explanation ---------- */
+  .explanation {
+    margin-top: 1.5rem;
+    background: var(--card-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem;
+    display: none;
+  }
+
+  .explanation.show { display: block; animation: fadeIn 0.3s ease; }
+
+  .explanation-label {
+    font-family: 'Consolas', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .explanation p {
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* ---------- Footer of card ---------- */
+  .question-footer {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  /* ---------- Results Screen ---------- */
+  .results-hero {
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+
+  .score-circle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent) 0%, var(--card) 0%);
+    margin: 0 auto 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 0 40px rgba(0, 255, 148, 0.2);
+  }
+
+  .score-inner {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .score-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'Consolas', monospace;
+  }
+
+  .score-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    font-family: 'Consolas', monospace;
+  }
+
+  .verdict {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .verdict-desc {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
+  /* ---------- Review ---------- */
+  .review-list { margin-top: 1rem; }
+
+  .review-item {
+    background: var(--card-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .review-icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .review-icon.ok {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .review-icon.fail {
+    background: var(--warning);
+    color: white;
+  }
+
+  .review-content { flex: 1; }
+
+  .review-q {
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
+  }
+
+  .review-detail {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    padding: 2rem 1rem 1rem;
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    font-family: 'Consolas', monospace;
+  }
+
+  footer a {
+    color: var(--accent-dim);
+    text-decoration: none;
+  }
+
+  footer a:hover { text-decoration: underline; }
+
+  /* ---------- Tips Section (welcome screen) ---------- */
+  .tips-section { margin-top: 1.5rem; }
+
+  .tip-row {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tip-row:last-child { border-bottom: none; }
+
+  .tip-num {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .tip-content strong {
+    display: block;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+  }
+
+  .tip-content span {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 600px) {
+    .container { padding: 1rem; }
+    .card { padding: 1.25rem; }
+    .question-text { font-size: 1.1rem; }
+    .option { padding: 0.85rem; font-size: 0.95rem; }
+    .score-circle { width: 150px; height: 150px; }
+    .score-inner { width: 125px; height: 125px; }
+    .score-number { font-size: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="logo">🛡️</div>
+    <h1>PHISHING <span class="accent">AWARENESS QUIZ</span></h1>
+    <div class="subtitle">// recognize. defend. report.</div>
+    <div class="meta">&gt;_ CodeAlpha Cybersecurity Internship — Task 2</div>
+  </header>
+
+  <!-- ============ WELCOME SCREEN ============ -->
+  <section id="screen-welcome" class="screen active">
+    <div class="card welcome-card">
+      <div class="label">// before you begin</div>
+      <h2>Test Your Phishing Defense Skills</h2>
+      <p>This interactive training will challenge you with <strong class="accent">10 realistic scenarios</strong> — emails, URLs, phone calls and social engineering attempts. For each one, decide if it's a threat or legitimate.</p>
+
+      <ul class="features">
+        <li>10 questions covering email, URL, vishing, and BEC attacks</li>
+        <li>Detailed explanation after every answer</li>
+        <li>Personalized score and skill assessment</li>
+        <li>Review all your answers at the end</li>
+      </ul>
+
+      <div style="margin-top: 2rem; text-align: center;">
+        <button class="btn" id="btn-start">START THE QUIZ →</button>
+      </div>
+    </div>
+
+    <div class="card-alt tips-section">
+      <div class="label">// quick reference before you start</div>
+      <div class="tip-row">
+        <div class="tip-num">1</div>
+        <div class="tip-content"><strong>Read URLs right-to-left</strong><span>The real domain is just before the first single slash.</span></div>
+      </div>
+      <div class="tip-row">
+        <div class="tip-num">2</div>
+        <div class="tip-content"><strong>Look for urgency cues</strong><span>Phishers create pressure to bypass careful thinking.</span></div>
+      </div>
+      <div class="tip-row">
+        <div class="tip-num">3</div>
+        <div class="tip-content"><strong>Verify out of band</strong><span>For any financial or sensitive request, confirm through a second channel.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ SCREEN ============ -->
+  <section id="screen-quiz" class="screen">
+    <div class="progress-wrap">
+      <span id="progress-text">QUESTION 01 / 10</span>
+      <span id="score-text" class="accent">SCORE: 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+    <div class="card">
+      <div class="label" id="q-category">// email phishing</div>
+      <h2 class="question-text" id="q-text">Question text will appear here.</h2>
+      <div class="question-context mono" id="q-context" style="display: none;"></div>
+      <div class="options" id="q-options"></div>
+
+      <div class="explanation" id="q-explanation">
+        <div class="explanation-label">EXPLANATION</div>
+        <p id="q-explanation-text"></p>
+      </div>
+
+      <div class="question-footer">
+        <button class="btn" id="btn-next" style="display:none;">NEXT QUESTION →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS SCREEN ============ -->
+  <section id="screen-results" class="screen">
+    <div class="card">
+      <div class="results-hero">
+        <div class="score-circle" id="score-circle">
+          <div class="score-inner">
+            <div class="score-number" id="final-score">0/10</div>
+            <div class="score-label">SCORE</div>
+          </div>
+        </div>
+        <div class="verdict" id="verdict">Verdict</div>
+        <div class="verdict-desc" id="verdict-desc">Description</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">// answer review</div>
+      <div class="review-list" id="review-list"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="btn-retry">RETRY QUIZ</button>
+      <button class="btn btn-secondary" id="btn-home">BACK TO START</button>
+    </div>
+  </section>
+
+  <footer>
+    Built by Abdoul Wahab Oumarou Achoura — CodeAlpha Cybersecurity Internship Task 2<br>
+    &gt;_ phishing-awareness --version 1.0
+  </footer>
+</div>
+
+<script>
+// ============ QUIZ DATA ============
+const QUESTIONS = [
+  {
+    category: "// email phishing",
+    text: "You receive an email from 'support@arnaz0n.com' asking you to verify your password. What should you do?",
+    context: "<strong>From:</strong> support@arnaz0n.com<br><strong>Subject:</strong> Action required: verify your account",
+    options: [
+      "Click the link to verify quickly",
+      "Reply asking if it's legitimate",
+      "Delete the email and report it",
+      "Forward it to your colleagues"
+    ],
+    correct: 2,
+    explanation: "The sender domain is 'arnaz0n.com' (with a zero instead of an 'o') — a spoofed lookalike of amazon.com. Never click, never reply (replying confirms your address is active). The correct response is to report it to your security team and delete it."
+  },
+  {
+    category: "// business email compromise",
+    text: "Your 'CEO' emails asking you to urgently buy $5,000 in gift cards for client gifts. What's the BEST response?",
+    context: "<strong>From:</strong> John Smith (CEO) &lt;john.smith.ceo@gmail.com&gt;<br><strong>Subject:</strong> URGENT — quick favor needed",
+    options: [
+      "Buy the gift cards immediately — it's the CEO",
+      "Call the CEO directly to confirm the request",
+      "Reply to the email asking for more details",
+      "Ask another employee what to do"
+    ],
+    correct: 1,
+    explanation: "Classic CEO fraud (BEC scam). Two red flags: the CEO using a Gmail address instead of company email, and pressure for gift cards. ALWAYS verify financial requests through a second, independent channel (phone, in-person). Replying confirms nothing — the attacker controls that conversation."
+  },
+  {
+    category: "// URL inspection",
+    text: "Which URL is the safest to enter your Google credentials?",
+    context: null,
+    options: [
+      "https://accounts.google.com/signin",
+      "https://google.security-check.com",
+      "https://accounts.google.com.verify-now.net",
+      "https://goggle.com/login"
+    ],
+    correct: 0,
+    explanation: "Read URLs right-to-left until you find the first single slash. The real domain is the part just before. Option A is genuinely on google.com. Option C uses 'google.com' as a subdomain of 'verify-now.net'. Option D is a typosquat (goggle ≠ google)."
+  },
+  {
+    category: "// HTTPS misconception",
+    text: "A website has a padlock icon (HTTPS). Does this mean it's safe?",
+    context: null,
+    options: [
+      "Yes, the padlock guarantees safety",
+      "Yes, but only if it's a green padlock",
+      "No, it only means the connection is encrypted",
+      "No, padlocks are only for banking sites"
+    ],
+    correct: 2,
+    explanation: "HTTPS encrypts data in transit between your browser and the server. It does NOT verify that the website is legitimate. Modern phishing sites routinely have valid TLS certificates — anyone can get a free one in 5 minutes from Let's Encrypt."
+  },
+  {
+    category: "// incident response",
+    text: "You accidentally clicked a phishing link and entered your password. What should you do FIRST?",
+    context: null,
+    options: [
+      "Wait and see if anything bad happens",
+      "Change the password immediately from a safe device",
+      "Email IT to explain what happened",
+      "Run an antivirus scan"
+    ],
+    correct: 1,
+    explanation: "Speed matters. Change the password immediately — and from a DIFFERENT, safe device (in case the current one is now infected). Then enable MFA, report to IT, and run a scan. The correct order: contain → report → investigate."
+  },
+  {
+    category: "// vishing (voice phishing)",
+    text: "Someone calls claiming to be from Microsoft Support saying your computer is sending suspicious traffic. They want remote access to 'fix' it. What's the safest response?",
+    context: "<strong>Caller ID:</strong> +1 (800) 555-MICROSOFT<br><strong>Claim:</strong> Microsoft Support — urgent action needed",
+    options: [
+      "Give them remote access to fix the issue",
+      "Hang up immediately and don't call back",
+      "Ask them to email you instead",
+      "Give them your IP address only"
+    ],
+    correct: 1,
+    explanation: "Microsoft (and Apple, Google, etc.) NEVER cold-call users about security issues. Caller IDs are easily spoofed. Hang up without engaging — even saying 'no' confirms your number is active and may invite more attempts."
+  },
+  {
+    category: "// red flags",
+    text: "You get an email from your bank with the greeting 'Dear Valued Customer'. The grammar is awkward and there's a 24-hour deadline. What is this most likely?",
+    context: "<strong>From:</strong> security@yourbank-alerts.com<br><strong>Subject:</strong> Account suspention notice — act within 24 hours",
+    options: [
+      "A legitimate bank notification",
+      "Phishing — generic greeting + urgency + typos",
+      "A misconfigured bank system",
+      "Spam, but harmless"
+    ],
+    correct: 1,
+    explanation: "Three classic red flags: (1) Generic greeting — banks know your name; (2) Urgency — '24 hours' creates panic; (3) Typo — 'suspention' instead of 'suspension'. Plus the sender domain 'yourbank-alerts.com' is suspicious (banks use their real domain). All four signs point to phishing."
+  },
+  {
+    category: "// social engineering",
+    text: "A coworker sends you a Slack message: 'Hey, I locked myself out of the system. Can you send me your login so I can finish the report?' What do you do?",
+    context: "<strong>From:</strong> Sarah from Marketing<br><strong>Channel:</strong> Direct message on Slack",
+    options: [
+      "Send credentials — she's a coworker",
+      "Refuse politely; tell her to contact IT",
+      "Send credentials with extra warnings",
+      "Send only the password, not the username"
+    ],
+    correct: 1,
+    explanation: "NEVER share credentials — not even with coworkers, not even with IT, not even temporarily. This could be (1) a hijacked Slack account, (2) social engineering, or (3) a careless coworker who needs to be redirected to proper channels. The right answer is always: 'IT can reset your access.'"
+  },
+  {
+    category: "// smishing",
+    text: "You get a text message: 'USPS: Your package cannot be delivered. Update your address: bit.ly/USPS-update'. What should you do?",
+    context: "<strong>From:</strong> +1-XXX-XXX-XXXX<br><strong>Text:</strong> USPS: Your package cannot be delivered. Update: bit.ly/USPS-update",
+    options: [
+      "Click the link — you're expecting a package",
+      "Ignore/delete; verify on the official USPS website",
+      "Reply STOP to unsubscribe",
+      "Forward it to friends as a warning"
+    ],
+    correct: 1,
+    explanation: "Smishing (SMS phishing). Three issues: (1) Shortened URLs hide the real destination, (2) USPS doesn't text random package issues, (3) Replying — even 'STOP' — confirms the number is active. Always verify by going to the official site directly (usps.com) and entering your tracking number."
+  },
+  {
+    category: "// final challenge",
+    text: "Which is the BEST overall defense against phishing attacks?",
+    context: null,
+    options: [
+      "An expensive antivirus product",
+      "Multi-factor authentication + skepticism + verification habits",
+      "Avoiding email entirely",
+      "Using a different browser"
+    ],
+    correct: 1,
+    explanation: "There is no single technical product that stops phishing — because phishing targets humans, not machines. The strongest defense is a combination: MFA (prevents stolen passwords from being useful), skepticism (recognize the red flags), and verification habits (always confirm sensitive requests through a second channel)."
+  }
+];
+
+// ============ STATE ============
+let currentIndex = 0;
+let score = 0;
+let userAnswers = []; // {questionIndex, selected, correct, isCorrect}
+
+// ============ ELEMENTS ============
+const screens = {
+  welcome: document.getElementById('screen-welcome'),
+  quiz: document.getElementById('screen-quiz'),
+  results: document.getElementById('screen-results')
+};
+
+const el = {
+  btnStart: document.getElementById('btn-start'),
+  btnNext: document.getElementById('btn-next'),
+  btnRetry: document.getElementById('btn-retry'),
+  btnHome: document.getElementById('btn-home'),
+  progressText: document.getElementById('progress-text'),
+  scoreText: document.getElementById('score-text'),
+  progressFill: document.getElementById('progress-fill'),
+  qCategory: document.getElementById('q-category'),
+  qText: document.getElementById('q-text'),
+  qContext: document.getElementById('q-context'),
+  qOptions: document.getElementById('q-options'),
+  qExplanation: document.getElementById('q-explanation'),
+  qExplanationText: document.getElementById('q-explanation-text'),
+  finalScore: document.getElementById('final-score'),
+  scoreCircle: document.getElementById('score-circle'),
+  verdict: document.getElementById('verdict'),
+  verdictDesc: document.getElementById('verdict-desc'),
+  reviewList: document.getElementById('review-list')
+};
+
+// ============ FUNCTIONS ============
+function showScreen(name) {
+  Object.values(screens).forEach(s => s.classList.remove('active'));
+  screens[name].classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startQuiz() {
+  currentIndex = 0;
+  score = 0;
+  userAnswers = [];
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIndex];
+  const total = QUESTIONS.length;
+  const num = currentIndex + 1;
+
+  // progress
+  el.progressText.textContent = `QUESTION ${String(num).padStart(2,'0')} / ${String(total).padStart(2,'0')}`;
+  el.scoreText.textContent = `SCORE: ${score}`;
+  el.progressFill.style.width = `${(currentIndex / total) * 100}%`;
+
+  // question
+  el.qCategory.textContent = q.category;
+  el.qText.textContent = q.text;
+  if (q.context) {
+    el.qContext.innerHTML = q.context;
+    el.qContext.style.display = 'block';
+  } else {
+    el.qContext.style.display = 'none';
+  }
+
+  // options
+  el.qOptions.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.options.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.dataset.index = i;
+    div.innerHTML = `
+      <div class="option-letter">${letters[i]}</div>
+      <div class="option-text">${opt}</div>
+      <div class="option-mark"></div>
+    `;
+    div.addEventListener('click', () => handleAnswer(i));
+    el.qOptions.appendChild(div);
+  });
+
+  // reset
+  el.qExplanation.classList.remove('show');
+  el.btnNext.style.display = 'none';
+}
+
+function handleAnswer(selectedIndex) {
+  const q = QUESTIONS[currentIndex];
+  const correctIndex = q.correct;
+  const isCorrect = selectedIndex === correctIndex;
+
+  if (isCorrect) score++;
+
+  userAnswers.push({
+    questionIndex: currentIndex,
+    selected: selectedIndex,
+    correct: correctIndex,
+    isCorrect: isCorrect
+  });
+
+  // mark options
+  const optionDivs = document.querySelectorAll('.option');
+  optionDivs.forEach((div, i) => {
+    div.classList.add('disabled');
+    div.style.pointerEvents = 'none';
+    const mark = div.querySelector('.option-mark');
+    if (i === correctIndex) {
+      div.classList.add('correct');
+      mark.textContent = '✓';
+    } else if (i === selectedIndex && !isCorrect) {
+      div.classList.add('wrong');
+      mark.textContent = '✗';
+    }
+  });
+
+  // explanation
+  el.qExplanationText.textContent = q.explanation;
+  el.qExplanation.classList.add('show');
+
+  // next button
+  el.btnNext.textContent = (currentIndex === QUESTIONS.length - 1) ? 'SEE RESULTS →' : 'NEXT QUESTION →';
+  el.btnNext.style.display = 'inline-block';
+
+  // update score immediately
+  el.scoreText.textContent = `SCORE: ${score}`;
+}
+
+function nextQuestion() {
+  if (currentIndex < QUESTIONS.length - 1) {
+    currentIndex++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  const total = QUESTIONS.length;
+  const pct = Math.round((score / total) * 100);
+
+  el.finalScore.textContent = `${score}/${total}`;
+
+  // animate the conic gradient
+  setTimeout(() => {
+    el.scoreCircle.style.background =
+      `conic-gradient(var(--accent) 0% ${pct}%, var(--card) ${pct}% 100%)`;
+  }, 100);
+
+  // verdict
+  let verdictText, verdictDesc, verdictColor;
+  if (pct === 100) {
+    verdictText = "PHISHING-PROOF 🛡️";
+    verdictDesc = "Perfect score! You'd make a great security analyst — share this quiz with friends and colleagues.";
+    verdictColor = "var(--accent)";
+  } else if (pct >= 80) {
+    verdictText = "VERY STRONG DEFENSE 💪";
+    verdictDesc = "Excellent! You have strong instincts. Brush up on the few you missed and you're set.";
+    verdictColor = "var(--accent)";
+  } else if (pct >= 60) {
+    verdictText = "ON THE RIGHT TRACK ⚡";
+    verdictDesc = "Solid foundation. Review your mistakes below and you'll be hard to fool.";
+    verdictColor = "var(--gold)";
+  } else if (pct >= 40) {
+    verdictText = "NEEDS PRACTICE 📚";
+    verdictDesc = "Half-way there. Carefully review the explanations — these are the patterns attackers exploit.";
+    verdictColor = "var(--gold)";
+  } else {
+    verdictText = "AT RISK ⚠️";
+    verdictDesc = "Take your time reviewing the explanations. Real attacks happen daily — your defenses need work.";
+    verdictColor = "var(--warning)";
+  }
+
+  el.verdict.textContent = verdictText;
+  el.verdict.style.color = verdictColor;
+  el.verdictDesc.textContent = verdictDesc;
+
+  // build review list
+  el.reviewList.innerHTML = '';
+  userAnswers.forEach((ans, i) => {
+    const q = QUESTIONS[ans.questionIndex];
+    const div = document.createElement('div');
+    div.className = 'review-item';
+
+    const letters = ['A', 'B', 'C', 'D'];
+
+    div.innerHTML = `
+      <div class="review-icon ${ans.isCorrect ? 'ok' : 'fail'}">${ans.isCorrect ? '✓' : '✗'}</div>
+      <div class="review-content">
+        <div class="review-q">Q${i + 1}. ${q.text}</div>
+        <div class="review-detail">
+          Your answer: <strong>${letters[ans.selected]}</strong> — ${q.options[ans.selected]}
+          ${!ans.isCorrect ? `<br><span style="color:var(--accent)">Correct: <strong>${letters[ans.correct]}</strong> — ${q.options[ans.correct]}</span>` : ''}
+        </div>
+      </div>
+    `;
+    el.reviewList.appendChild(div);
+  });
+
+  showScreen('results');
+}
+
+// ============ EVENT LISTENERS ============
+el.btnStart.addEventListener('click', startQuiz);
+el.btnNext.addEventListener('click', nextQuestion);
+el.btnRetry.addEventListener('click', startQuiz);
+el.btnHome.addEventListener('click', () => showScreen('welcome'));
+
+// keyboard nav: 1-4 to answer, Enter for next
+document.addEventListener('keydown', (e) => {
+  if (!screens.quiz.classList.contains('active')) return;
+  if (e.key >= '1' && e.key <= '4') {
+    const idx = parseInt(e.key) - 1;
+    const optionDivs = document.querySelectorAll('.option:not(.disabled)');
+    if (optionDivs[idx] && !optionDivs[idx].classList.contains('disabled')) {
+      handleAnswer(idx);
+    }
+  } else if (e.key === 'Enter' && el.btnNext.style.display !== 'none') {
+    nextQuestion();
+  }
+});
+</script>
+</body>
+</html>

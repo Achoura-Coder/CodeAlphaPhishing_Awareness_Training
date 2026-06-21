@@ -1,0 +1,29 @@
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# IDE / tooling
+.vscode/
+.idea/
+.claude/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# PowerPoint temporary files
+~$*.pptx
+~$*.docx
+
+# Archives
+*.zip
+*.rar
+*.7z
+
+# Sensitive files
+*.env
+secrets.txt
+credentials.txt
