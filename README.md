@@ -184,7 +184,7 @@ This training material is provided for **educational purposes only**. The phishi
 
 Cybersecurity Intern @ CodeAlpha
 
-- 🔗 [LinkedIn](linkedin.com/in/abdoul-wahab-oumarou-achoura-389a332ab)
+- 🔗 [LinkedIn](https://linkedin.com/in/abdoul-wahab-oumarou-achoura-389a332ab)
 - 🐙 [GitHub](https://github.com/Achoura-Coder)
 
 ---
